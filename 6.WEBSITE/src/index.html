@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,0&icon_names=layers"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Sofia"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+      rel="stylesheet"
+    />
+    <title>Three.js Lunar Mapping</title>
+    <style>
+      /* Global styles */
+      body {
+        margin: 0;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+      }
+
+      /* Header styles */
+      header {
+        width: 100%;
+        display: flex;
+        align-items: center; /* Vertically align items */
+        padding: 10px 20px;
+        background-color: rgba(0, 0, 0, 0.7);
+        box-sizing: border-box;
+      }
+
+      /* Logo styles */
+      header .logo {
+        width: 50px;
+        border-right: 1px solid #ede4e4e5; /* White line between logo and title */
+        padding-right: 30px; /* Space between logo and the line */
+      }
+
+      /* Title styles */
+      header .title {
+        font-size: 28px;
+        font-weight: bold;
+        font-family: "Times New Roman", Times, serif;
+        color: white;
+        margin-left: 30px; /* Add some space between logo and text */
+        flex-grow: 1;
+      }
+      /* LUNAR style (using a different font) */
+      .lunar {
+        .pt-serif-regular-italic {
+          font-family: "PT Serif", serif;
+          font-weight: 400;
+          font-style: italic;
+        }
+
+        font-size: 32px; /* Larger font size for "LUNAR" */
+        font-weight: bold;
+      }
+
+      /* MAPPING style (using a different font) */
+      .mapping {
+        font-family: "Sofia", sans-serif;
+        font-size: 24px; /* Smaller font size for "MAPPING" */
+        font-weight: normal;
+        font-style: italic;
+      }
+
+      /* Search bar container */
+      header .search-bar-container {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+      }
+
+      /* Search input field */
+      .search-bar {
+        padding: 8px 10px 8px 40px; /* Just padding for the input */
+        border: 2px solid white;
+        border-radius: 2px;
+        background-color: transparent;
+        color: white;
+        font-size: 16px;  
+        outline: none;
+        background-image: url("./img/loupe.png"); /* Your PNG icon */
+        background-position: 10px center; /* Position the icon inside the input */
+        background-repeat: no-repeat;
+        background-size: 20px; /* Set the size of the icon */
+      }
+      .search-bar:focus {
+        border-color: #ccc;
+      }
+      .search-bar::placeholder {
+        color: #ccc;
+      }
+
+      /* Sidebar styles */
+      .sidebar {
+        position: absolute;
+        top: 74px; /* Position below the header */
+        left: 0;
+        width: 100px; /* Initial collapsed width */
+        height: calc(100% - 60px); /* Full height minus header height */
+        background-color: #333;
+        color: white;
+        padding: 2.5% 0;
+        box-sizing: border-box;
+        overflow-y: auto;
+        transition: width 0.3s ease;
+      }
+      .sidebar a {
+        display: block;
+        color: white;
+        text-decoration: none;
+        margin-bottom: 20px;
+        text-align: center;
+        font-size: 20px;
+        position: relative; /* For positioning the tooltip */
+        border-bottom: 2px solid transparent; /* Add a transparent border to prevent overlap */
+      }
+      .sidebar-icon {
+        display: block;
+        width: 40px; /* Set width to 40px */
+        height: auto; /* Maintain aspect ratio */
+        margin: 0 auto;
+      }
+
+      /* Icons inside the sidebar */
+      .sidebar i {
+        display: block;
+        font-size: 24px;
+      }
+
+
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 40;
+      }
+      .popup {
+        z-index: 100;
+        position: absolute;
+        width: 15vw;
+        height: fit-content;
+        top: 50%;
+        right: 5%;
+        transform: translate(5%, -50%);
+        display: none;
+        flex-direction: column;
+        background-color: grey;
+        color: black;
+        padding: 1% 2%;
+        border-radius: 5px;
+        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+      }
+      .coords-head {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        margin-bottom: 2%;
+        padding: 2%;
+      }
+      .coords {
+        font-size: 1.25rem;
+        font-weight: bold;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .elements-abundance {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2.5%;
+        align-items: center;
+        padding: 2%;
+      }
+      .elements {
+        width: 100%;
+        padding: 1% 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .oxy {
+        color: greenyellow;
+      }
+      .sili {
+        color: greenyellow;
+      }
+      .mag {
+        color: greenyellow;
+      }
+      .alu {
+        color: greenyellow;
+      }
+      .cal {
+        color: greenyellow;
+      }
+      .sod {
+        color: greenyellow;
+      }
+      .iron {
+        color: greenyellow;
+      }
+      .tit {
+        color: greenyellow;
+      }
+      .sub button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        background-color: #4caf50;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .sub button:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="logo">
+        <!-- Place your logo here -->
+        <img
+          src="./img/Indian_Space_Research_Organisation_Logo.svg.png"
+          alt="Logo"
+          width="50"
+          height="50"
+        />
+      </div>
+      <div class="title">
+        <span class="lunar">Lunar Mapping</span> 
+      </div>
+      <div class="search-bar-container">
+        <!-- Search Bar -->
+        <form class="sub">
+          <input
+            class="search-bar"
+            type="text"
+            name="latitude"
+            placeholder="Latitude"
+          />
+          <input
+            class="search-bar"
+            type="text"
+            name="longitude"
+            placeholder="Longitude"
+          />
+          <button type="submit">Search</button>
+        </form>
+      </div>
+    </header>
+
+    <!-- Sidebar -->
+
+    <div class="sidebar">
+      <a href="../src/index.html" class="sidebar-item">
+        <img src="./img/home.png" alt="Home" class="sidebar-icon" />
+      </a>
+      <a href="../src/sub.html"
+        ><img src="./img/moon-2.png" alt="Moon 2" class="sidebar-icon"
+      /></a>
+      <a href="../src/3dmap.html" class="sidebar-item">
+        <img src="./img/moon.png" alt="Moon" class="sidebar-icon" />
+      </a>
+      <a href="../src/2dmap.html">
+        <img src="./img/2d.png" alt="2D" class="sidebar-icon" />
+      </a>
+    </div>
+
+    <div class="popup">
+      <div class="coords-head">
+        <div class="coords lat">Lat :</div>
+        <div class="coords lon">Lon :</div>
+      </div>
+      <div class="elements-abundance">
+        <div class="elements">
+          <span>Oxygen :</span><span class="oxy"></span>
+        </div>
+        <div class="elements">
+          <span>Silicon :</span><span class="sili"></span>
+        </div>
+        <div class="elements">
+          <span>Magnesium :</span><span class="mag"></span>
+        </div>
+        <div class="elements">
+          <span>Aluminum :</span><span class="alu"></span>
+        </div>
+        <div class="elements">
+          <span>Calcium :</span><span class="cal"></span>
+        </div>
+        <div class="elements">
+          <span>Sodium :</span><span class="sod"></span>
+        </div>
+        <div class="elements">
+          <span>Iron :</span><span class="iron"></span>
+        </div>
+        <div class="elements">
+          <span>Titanium :</span><span class="tit"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content area (now empty) -->
+    <div class="content">
+      <!-- Your Three.js scene will be rendered here -->
+      <script src="./js/script1.js" type="module"></script>
+    </div>
+  </body>
+</html>
