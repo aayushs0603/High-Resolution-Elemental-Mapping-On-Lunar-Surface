@@ -1,0 +1,14 @@
+numpy
+pandas
+rasterio
+pillow
+torch
+torchvision
+torch_geometric
+torch_optimizer
+geopandas
+shapely
+scipy
+tqdm
+scikit-learn
+gdown 
